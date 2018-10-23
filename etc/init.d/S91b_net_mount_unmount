@@ -1,0 +1,30 @@
+#!/bin/sh
+
+start()
+{
+	echo "Network mount unmount script loaded"
+}
+
+stop()
+{
+	if [ -d /var/mount ]; then
+    umount "/var/mount"
+    rm -rf "/var/mount"
+  fi
+}
+
+case "$1" in
+start)
+	start
+;;
+stop)
+	stop
+;;
+restart)
+	stop
+	start
+;;
+*)
+	echo "Network mount unmount script: Stop unmounts /var/mount if it exists..."
+	exit 1
+esac

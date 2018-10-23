@@ -1,0 +1,32 @@
+Hakchi_Libretro_Initialise(){
+  local writeTest="$mountpoint/media/$modname/write-test"
+  if [ -z "$(mount | grep "/etc/libretro ")" ] && [ -d "$mountpoint/media/$modname" ] && touch "$writeTest"; then
+    rm "$writeTest"
+    local externalPath="$mountpoint/media/data/ra_data"
+    local localPath="$rootfs/etc/libretro/.config/retroarch"
+    for ra_folders in database thumbnails playlists downloads; do
+      if [ ! -d "$externalPath/$ra_folders" ]; then
+        mkdir -p "$externalPath/$ra_folders"
+        copy "$localPath/$ra_folders" "$externalPath"
+        rm -rf "$localPath/$ra_folders/"*
+      fi
+      mount_bind "$externalPath/$ra_folders" "$localPath/$ra_folders"
+      overmount "${localPath#$rootfs}/$ra_folders"
+    done
+    unset ra_folders
+  fi
+  [ -f "$mountpoint/usr/bin/clover-kachikachi" ] && overmount /usr/bin/clover-kachikachi
+  [ -f "$mountpoint/usr/bin/clover-canoe-shvc" ] && overmount /usr/bin/clover-canoe-shvc
+  
+  # Compatibility fix for old hakchi versions
+  [ ! -L "$mountpoint/var/saves" ] && ln -s "/var/lib/clover/profiles/0" "$mountpoint/var/saves"
+}
+
+Hakchi_RetroArch_Save_Rename(){
+  # If save has already been renamed exit function
+  if [ -f "$(dirname "$1")/save.sram" ] && [ $(stat -c '%s' "$(dirname "$1")/save.sram") -eq 0 ]; then
+    return
+  fi
+  [ "$2" == "gpsp" ] && mv "$1" "$(dirname "$1")/${3%.*}.sav" || mv "$1" "$(dirname "$1")/$3.sav"
+  touch "$(dirname "$1")/save.sram"
+}

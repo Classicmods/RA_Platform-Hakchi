@@ -1,0 +1,12 @@
+#!/bin/sh
+
+source /etc/preinit
+script_init
+
+uistop # Kill it! Kill it with fire!
+
+if [ -f "/bin/remote-exec" ]; then
+  echo retroarch-clover-child > /var/exec.flag
+else
+  exec retroarch-clover-child
+fi
