@@ -3,21 +3,21 @@ Hakchi_Libretro_Initialise(){
   if [ -z "$(mount | grep "/etc/libretro ")" ] && [ -d "$mountpoint/media/$modname" ] && touch "$writeTest"; then
     rm "$writeTest"
     local externalPath="$mountpoint/media/data/ra_data"
-    local localPath="$rootfs/etc/libretro/.config/retroarch"
-    for ra_folders in database thumbnails playlists downloads; do
+    local localPath="$mountpoint/etc/libretro/.config/retroarch"
+    for ra_folders in database thumbnails playlists downloads bios; do
       if [ ! -d "$externalPath/$ra_folders" ]; then
         mkdir -p "$externalPath/$ra_folders"
         copy "$localPath/$ra_folders" "$externalPath"
         rm -rf "$localPath/$ra_folders/"*
       fi
       mount_bind "$externalPath/$ra_folders" "$localPath/$ra_folders"
-      overmount "${localPath#$rootfs}/$ra_folders"
     done
     unset ra_folders
+	if [ -d "$externalPath/bios" ]; then
+	  mount_bind "$externalPath/bios" "$mountpoint/etc/libretro/system"
+	fi
   fi
-  [ -f "$mountpoint/usr/bin/clover-kachikachi" ] && overmount /usr/bin/clover-kachikachi
-  [ -f "$mountpoint/usr/bin/clover-canoe-shvc" ] && overmount /usr/bin/clover-canoe-shvc
-  
+
   # Compatibility fix for old hakchi versions
   [ ! -L "$mountpoint/var/saves" ] && ln -s "/var/lib/clover/profiles/0" "$mountpoint/var/saves"
 }
