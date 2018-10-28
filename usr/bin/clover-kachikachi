@@ -1,75 +1,41 @@
 #!/bin/sh
 
-set -x
-
 source /etc/preinit
 script_init
 
-export MALI_NOCLEAR=1
-
 decodepng "$rootfs/share/retroarch/assets/loading-min.png" > /dev/fb0;
 
-emulator=kachikachi
-clovercon_file=/dev/clovercon1
+emulator="kachikachi"
+filename="$1"
+extension="${filename##*.}"
+cloverconFile="/dev/clovercon1"
+
+[ "$extension" = "qd" ] && emulator="kachikachi"
 racheck(){
   while [ $# -gt 0 ]; do
-    [ "$1" == "--retroarch" ] && emulator=retroarch
-    [ "$1" == "-retroarch" ] && emulator=retroarch
-    [ "$1" == "--core" ] && core=$2
-    [ "$1" == "-core" ] && core=$2
+    [ "$1" = "--retroarch" ] && emulator="retroarch"
+    [ "$1" = "-retroarch" ] && emulator="retroarch"
+    [ "$1" = "--core" ] && core="$2"
+    [ "$1" = "-core" ] && core="$2"
     shift
   done
 }
-
 racheck ${1+"$@"}
 
-# Hold up to forcely disable RetroArch
-[ -e "$clovercon_file" ] && [ "$(cat $clovercon_file)" == "1000" ] && emulator=kachikachi
-# Hold down to forcely enable RetroArch
-[ -e "$clovercon_file" ] && [ "$(cat $clovercon_file)" == "2000" ] && emulator=retroarch
+# Hold up to forcely disable retroarch
+[ -e "$cloverconFile" ] && [ "$(cat $cloverconFile)" = "1000" ] && emulator="kachikachi"
+# Hold down to forcely enable retroarch
+[ -e "$cloverconFile" ] && [ "$(cat $cloverconFile)" = "2000" ] && emulator="retroarch"
 
-echo using $emulator
+[ -x "$squashfs/usr/bin/clover-kachikachi" ] || emulator="retroarch"
 
-if [ "$emulator" == "kachikachi" ]; then
-# Seems like this game will work on default emulator
-  options="$options --fullscreen"
-  options="$options --sync-guest-with-host"
-  options="$options --fds-initial-disk-insert-on-keypress"
-  options="$options --fds-auto-disk-side-switch"
-  options="$options --fds-disable-host-guest-sync-on-disk-op"
-  options="$options --keep-aspect-ratio"
-  if [ "$sftype" = hvcj ]; then
-    while [ $# -gt 0 ] ; do
-      case "$1" in
-      --video-mode)
-        case "$2" in
-        keep-aspect-ratio) options="$options --graphic-filter gpu720 --ppu-palette v1.3" ;;
-        pixel-perfect) options="$options --graphic-filter ppu --ppu-palette v1.3" ;;
-        crt-filter) options="$options --graphic-filter crt720 --enable-crt-scanlines --ppu-palette v1.3" ;;
-        esac
-        shift
-        ;;
-      --record-inputs) options="$options --record-inputs inputs --input-record-cache checkpoints --input-record-checkpoint-period 3600" ;;
-      --title-code) title_code="$2"; shift ;;
-      --rollback-*) printf "unsupported usage scenario\n" ; exit 127 ;;
-      --decorative-frame-path) shift ;;
-      --load-time-path) options="$options --load-time-file $2"; shift; ;;
-      --save-time-path) options="$options --save-time-file $2"; shift; ;;
-      --save-data-backing-file) sram_file="$2"; options="$options --save-data-backing-file $2"; shift ;;
-      --save-screenshot-on-quit) screenshot_file="$2"; options="$options --save-screenshot-on-quit $2"; shift ;;
-      --*-transition-fd) shift; ;;
-      *) options="$options $1" ;;
-      esac
-      shift
-    done
-    exec kachikachi $options
-  else
-    exec kachikachi $options ${1+"$@"}
-  fi
-fi
-
-if [ "$emulator" == "retroarch" ]; then
-# Using RetroArch
+if [ "$emulator" = "retroarch" ]; then
+  echo "using $emulator"
   [ -z "$core" ] && exec nes ${1+"$@"}
-  [ -z "$core" ] || exec retroarch-clover $core ${1+"$@"}
+  [ -z "$core" ] || exec retroarch-clover "$core" ${1+"$@"}
 fi
+
+emulator="kachikachi"
+echo "using $emulator"
+exec "$squashfs/usr/bin/clover-kachikachi" ${1+"$@"}
+exit 1

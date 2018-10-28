@@ -103,6 +103,8 @@ esac
 # Hold down to forcely enable RetroArch
 [ -e "$clovercon_file" ] && [ "$(cat $clovercon_file)" == "2000" ] && retroarch=1
 
+[ -x "$squashfs/usr/bin/clover-canoe-shvc" ] || retroarch=1
+
 if [ "$retroarch" == "0" ]; then
   exec canoe-shvc $options $log
 else
