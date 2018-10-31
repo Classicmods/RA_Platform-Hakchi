@@ -5,10 +5,12 @@ Hakchi_Libretro_Initialise(){
     local externalPath="$mountpoint/media/data/ra_data"
     local localPath="$mountpoint/etc/libretro/.config/retroarch"
     for ra_folders in database thumbnails playlists downloads; do
-      [ -d "$externalPath/$ra_folders" ] && mount -t overlayfs -o lowerdir="$localPath/$ra_folders",upperdir="$externalPath/$ra_folders" overlayfs "$localPath/$ra_folders"
+      mkdir -p "$externalPath/$ra_folders" && \
+      mount -t overlayfs -o lowerdir="$localPath/$ra_folders",upperdir="$externalPath/$ra_folders" overlayfs "$localPath/$ra_folders"
     done
     unset ra_folders
-	[ -d "$externalPath/system" ] && mount -t overlayfs -o lowerdir="$mountpoint/etc/libretro/system",upperdir="$externalPath/system" overlayfs "$mountpoint/etc/libretro/system"
+    mkdir -p "$externalPath/system" && \
+    mount -t overlayfs -o lowerdir="$mountpoint/etc/libretro/system",upperdir="$externalPath/system" overlayfs "$mountpoint/etc/libretro/system"
   fi
 
   # Compatibility fix for old hakchi versions
