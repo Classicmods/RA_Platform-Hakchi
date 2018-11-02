@@ -50,6 +50,7 @@ while [ $# -gt 0 ]; do
   [ "$1" == "--custom-loadscreen" ] && custom_loadscreen="$2"
   shift
 done
+[ -z "$title_code" ] && title_code="$(basename `dirname "$rom"`)"
 
 #### Visuals ###############################################################
 
@@ -158,7 +159,7 @@ fi
 #Overcommit this bitch. (Should solve dumb crashes due to memory limits)
 echo "1" > "/proc/sys/vm/overcommit_memory"
 
-[ -z "$timefile_save" ] && timefile_save="$load$t_suffix"
+[ -z "$timefile_save" ] && timefile_save="$save$t_suffix"
 [ -z "$timefile_load" ] && timefile_load="$load$t_suffix"
 
 # Hold L button while starting a game to toggle bezel-mode for this game
