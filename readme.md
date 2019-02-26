@@ -1,6 +1,18 @@
 ## Changelog
 
-### 1.7.5a - October 2018
+## 1.7.6 - Feburary 2019
+
+- First official proper build Libretro RetroArch build for the (S)NESC 
+- Added facility so you can just drag bios files to: USB:/data/ra_data/system to use on RA (no need for bios hmod)
+- Updated to latest 1.7.6
+- Completely redone standard config for RA
+- Made default Menu driver OZONE
+- Added 50 more pre-configured input drivers for more controllers
+- Optimised build a fair bit
+- Fixed ALSA midi issues
+- Updated info files
+
+### 1.7.5a - October 2018 (unreleased)
 
 - Compiled RA binary to 1.7.5 release
 
