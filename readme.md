@@ -60,12 +60,10 @@
 
 RetroArch and Retroarch Cores by libretro
 
-Hakchi RetroArch Neo main development by Swingflip, Bslenul and CompCom
+Specific Hakchi RetroArch development by Swingflip, CompCom and Bslenul
 
-Hakchi by MadMonkey 
+Special thanks to ModMyClassic community as a whole
 
-Special thanks to Team Hakchi Resources, Team Shinkansen and MadMonkey
+https://modmyclassic.com
 
-https://hakchiresources.com
-
-(c) 2016-2018
+(c) 2019
