@@ -6,11 +6,11 @@
 - Added facility so you can just drag bios files to: USB:/data/ra_data/system to use on RA (no need for bios hmod)
 - Updated to latest 1.7.6
 - Completely redone standard config for RA
-- Made default Menu driver OZONE
 - Added 50 more pre-configured input drivers for more controllers
 - Optimised build a fair bit
 - Fixed ALSA midi issues
 - Updated info files
+- OZONE doesn't currently work with the (S)NESC but hopefully will be fixed soon
 
 ### 1.7.5a - October 2018 (unreleased)
 
